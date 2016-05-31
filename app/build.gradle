@@ -123,11 +123,16 @@ android {
 // jamorham auto test rig
 task jamorhamAutoInstall(type: Exec) {
     // just comment out the line below if it causes compile problems
-    commandLine "bash", "$projectDir/autoinstallviausb"
+    //commandLine "bash", "$projectDir/autoinstallviausb"
 }
 assembleRelease.doLast {
     jamorhamAutoInstall.execute()
 }
+
+//assembleRelease {
+//    jamorhamAutoInstall.execute()
+//}
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -144,7 +149,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-wearable:8.4.0'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.squareup.okhttp:okhttp:2.5.0' 
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
@@ -154,7 +159,7 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'com.embarkmobile:zxing-android-minimal:2.0.0@aar'
     compile 'com.embarkmobile:zxing-android-integration:2.0.0@aar'
-    //compile 'com.embarkmobile:zxing-android-legacy:2.0.0@aar'
+    //compile 'com.embarkmobile:zxing-android-legacy:2.0.0@aar' // PT: might not be needed
     compile 'com.google.zxing:core:3.1.0'
     compile 'net.tribe7.seeds:seeds-functional:16.0.1'
     compile 'net.tribe7.seeds:seeds-primitives:16.0.1'
@@ -165,6 +170,10 @@ dependencies {
     }
     compile 'uk.com.robust-it:cloning:1.9.2'
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
+
+    // Pebble-Trend, needs to be checked if really needed
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'ar.com.hjg:pngj:2.1.0'
 
 }
 

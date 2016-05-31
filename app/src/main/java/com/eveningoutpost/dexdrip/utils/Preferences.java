@@ -21,6 +21,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
+import android.preference.SwitchPreference;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -37,6 +38,7 @@ import com.eveningoutpost.dexdrip.Services.PlusSyncService;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
 import com.eveningoutpost.dexdrip.UtilityModels.Constants;
 import com.eveningoutpost.dexdrip.UtilityModels.PebbleSync;
+import com.eveningoutpost.dexdrip.UtilityModels.PebbleSyncTrend;
 import com.eveningoutpost.dexdrip.UtilityModels.UpdateActivity;
 import com.eveningoutpost.dexdrip.WidgetUpdateService;
 import com.eveningoutpost.dexdrip.xDripWidget;
@@ -48,6 +50,7 @@ import com.nightscout.core.barcode.NSBarcodeConfig;
 import net.tribe7.common.base.Joiner;
 
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -584,7 +587,24 @@ public class Preferences extends PreferenceActivity {
 
             final Preference scanShare = findPreference("scan_share2_barcode");
             final EditTextPreference transmitterId = (EditTextPreference) findPreference("dex_txid");
-            final Preference pebbleSync = findPreference("broadcast_to_pebble");
+            final Preference pebbleSync2 = findPreference("broadcast_to_pebble");
+
+            // Pebble Trend - START
+            final PreferenceCategory watchCategory = (PreferenceCategory) findPreference("watch_integration");
+            //final Preference pebbleTrendWatchface = findPreference("");
+            final Preference pebbleTrend = findPreference("pebble_display_trend");
+            final Preference pebbleHighLine = findPreference("pebble_high_line");
+            final Preference pebbleLowLine = findPreference("pebble_low_line");
+            final Preference pebbleTrendPeriod = findPreference("pebble_trend_period");
+            final Preference pebbleDelta = findPreference("pebble_show_delta");
+            final Preference pebbleDeltaUnits = findPreference("pebble_show_delta_units");
+            final Preference pebbleShowArrows = findPreference("pebble_show_arrows");
+            final EditTextPreference pebbleSpecialValue = (EditTextPreference) findPreference("pebble_special_value");
+            bindPreferenceSummaryToValueAndEnsureNumeric(pebbleSpecialValue);
+            final Preference pebbleSpecialText = findPreference("pebble_special_text");
+            bindPreferenceSummaryToValue(pebbleSpecialText);
+            // Pebble Trend - END
+
             final Preference useCustomSyncKey = findPreference("use_custom_sync_key");
             final Preference CustomSyncKey = findPreference("custom_sync_key");
             final PreferenceCategory collectionCategory = (PreferenceCategory) findPreference("collection_category");
@@ -717,41 +737,43 @@ public class Preferences extends PreferenceActivity {
             if(prefs.getString("dex_collection_method", "BluetoothWixel").compareTo("DexcomG5") == 0) {
                 collectionCategory.addPreference(transmitterId);
             }
-            pebbleSync.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            
+
+
+
+            DecimalFormat df = new DecimalFormat("#.#");
+
+           if(prefs.getString("units", "mgdl").compareTo("mmol")!=0) {
+               df.setMaximumFractionDigits(0);
+               pebbleSpecialValue.setDefaultValue("99");
+               if(pebbleSpecialValue.getText().compareTo("5.5")==0) {
+                   pebbleSpecialValue.setText(df.format(Double.valueOf(pebbleSpecialValue.getText()) * Constants.MMOLL_TO_MGDL));
+               }
+           }else{
+               df.setMaximumFractionDigits(1);
+               pebbleSpecialValue.setDefaultValue("5.5");
+               if(pebbleSpecialValue.getText().compareTo("99") ==0) {
+                   pebbleSpecialValue.setText(df.format(Double.valueOf(pebbleSpecialValue.getText()) / Constants.MMOLL_TO_MGDL));
+               }
+           }
+
+
+            // Pebble Trend (just major change)
+            pebbleSync2.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     final Context context = preference.getContext();
-                    if ((Boolean) newValue) {
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    int newValueInt = (Integer)newValue;
 
-                            builder.setTitle("Pebble Install");
-                            builder.setMessage("Install Pebble Watchface?");
+                    installPebbleWatchface(newValueInt, preference);
 
-                            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    context.startActivity(new Intent(context, InstallPebbleWatchFace.class));
-                                }
-                            });
+                    enablePebble(newValueInt, context);
 
-                            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            AlertDialog alert = builder.create();
-                            alert.show();
-
-                        context.startService(new Intent(context, PebbleSync.class));
-                    } else {
-                        context.stopService(new Intent(context, PebbleSync.class));
-                    }
                     return true;
                 }
             });
+
             bindPreferenceSummaryToValue(collectionMethod);
             bindPreferenceSummaryToValue(shareKey);
 //            bindPreferenceSummaryToValue(wifiRecievers);
@@ -764,6 +786,124 @@ public class Preferences extends PreferenceActivity {
                     return true;
                 }
             });
+
+            // Pebble Trend -- START
+
+            int currentPebbleSync = prefs.getInt(pebbleSync2.getKey(), 1);
+
+            if (currentPebbleSync==1)
+            {
+                watchCategory.removePreference(pebbleSpecialValue);
+                watchCategory.removePreference(pebbleSpecialText);
+            }
+
+            if (currentPebbleSync!=3)
+            {
+                watchCategory.removePreference(pebbleTrend);
+                watchCategory.removePreference(pebbleHighLine);
+                watchCategory.removePreference(pebbleLowLine);
+                watchCategory.removePreference(pebbleTrendPeriod);
+                watchCategory.removePreference(pebbleDelta);
+                watchCategory.removePreference(pebbleDeltaUnits);
+                watchCategory.removePreference(pebbleShowArrows);
+            }
+
+
+
+            pebbleTrend.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    Context context = preference.getContext();
+
+                    int pebbleType = (Integer)newValue;
+
+                    watchCategory.removeAll();
+
+                    switch(pebbleType)
+                    {
+                        case 2:
+                        {
+                            watchCategory.removePreference(pebbleSpecialValue);
+                            watchCategory.removePreference(pebbleSpecialText);
+                        } break;
+
+                        case 3:
+                        {
+                            watchCategory.addPreference(pebbleTrend);
+                            watchCategory.addPreference(pebbleHighLine);
+                            watchCategory.addPreference(pebbleLowLine);
+                            watchCategory.addPreference(pebbleTrendPeriod);
+                            watchCategory.addPreference(pebbleDelta);
+                            watchCategory.addPreference(pebbleDeltaUnits);
+                            watchCategory.addPreference(pebbleShowArrows);
+                        } break;
+
+                        default:
+                            break;
+                    }
+
+                    return true;
+                }
+            });
+
+
+            pebbleHighLine.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+               @Override
+               public boolean onPreferenceChange(Preference preference, Object newValue){
+                   Context context = preference.getContext();
+                   context.startService(new Intent(context, PebbleSyncTrend.class));
+                   return true;
+               }
+           });
+
+           pebbleLowLine.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+               @Override
+               public boolean onPreferenceChange(Preference preference, Object newValue) {
+                   Context context = preference.getContext();
+                   context.startService(new Intent(context, PebbleSyncTrend.class));
+                   return true;
+               }
+           });
+
+            pebbleTrendPeriod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue){
+                   Context context = preference.getContext();
+                   context.startService(new Intent(context, PebbleSyncTrend.class));
+                   return true;
+                }
+            });
+            pebbleDelta.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue){
+                    Context context = preference.getContext();
+                    context.startService(new Intent(context, PebbleSyncTrend.class));
+                    return true;
+                }
+            });
+            pebbleDeltaUnits.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue){
+                    Context context = preference.getContext();
+                    context.startService(new Intent(context, PebbleSyncTrend.class));
+                    return true;
+                }
+            });
+            pebbleShowArrows.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue){
+                    Context context = preference.getContext();
+                    context.startService(new Intent(context, PebbleSyncTrend.class));
+                    return true;
+                }
+            });
+
+            // Pebble Trend -- END
+
+            //bindWidgetUpdater();
+
+
+
 
             bindPreferenceSummaryToValue(transmitterId);
             transmitterId.getEditText().setFilters(new InputFilter[]{new InputFilter.AllCaps()});
@@ -859,6 +999,78 @@ public class Preferences extends PreferenceActivity {
                 }
             });
         }
+
+        private void installPebbleWatchface(final int pebbleType, Preference preference) {
+
+            final Context context = preference.getContext();
+
+            if (pebbleType==1)
+                return;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle("Pebble Install");
+            builder.setMessage(pebbleType == 2 ? "Install Pebble Watchface?" : "Install Pebble Trend Watchface?");
+
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    if (pebbleType==2) {
+
+                        context.startActivity(new Intent(context, InstallPebbleWatchFace.class));
+                    }
+                    else
+                    {
+                        context.startActivity(new Intent(context, InstallPebbleTrendWatchFace.class));
+                    }
+                }
+            });
+
+            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
+        private static int pebbleType = 1;
+
+        private void enablePebble(int newValueInt, Context context) {
+
+            disablePebble(context);
+
+            pebbleType = newValueInt;
+
+            if (pebbleType==2)
+            {
+                context.startService(new Intent(context, PebbleSync.class));
+            }
+            else if (pebbleType==3)
+            {
+                context.startService(new Intent(context, PebbleSyncTrend.class));
+            }
+        }
+
+
+        private void disablePebble(Context context)
+        {
+            if (pebbleType == 2)
+            {
+                context.stopService(new Intent(context, PebbleSync.class));
+            }
+            else if (pebbleType == 3)
+            {
+                context.stopService(new Intent(context, PebbleSyncTrend.class));
+            }
+        }
+
+
+
 
         private void setupBarcodeConfigScanner() {
             findPreference("auto_configure").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -39,13 +39,15 @@ public class PebbleSync extends Service {
     public static final int BG_DELTA_KEY = 4;
     public static final int UPLOADER_BATTERY_KEY = 5;
     public static final int NAME_KEY = 6;
+
     private final static String TAG = PebbleSync.class.getSimpleName();
     public static double last_time_seen = 0;
-    private static int lastTransactionId;
+    public static int lastTransactionId;
     BroadcastReceiver newSavedBgReceiver;
-    private Context mContext;
-    private BgGraphBuilder bgGraphBuilder;
-    private BgReading mBgReading;
+
+    protected Context mContext;
+    protected BgGraphBuilder bgGraphBuilder;
+    protected BgReading mBgReading;
 
     private void watchdog() {
         if (last_time_seen == 0) return;
@@ -91,7 +93,7 @@ public class PebbleSync extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private void init() {
+    protected void init() {
         Log.i(TAG, "Initialising...");
         Log.i(TAG, "configuring PebbleDataReceiver");
 
@@ -140,7 +142,7 @@ public class PebbleSync extends Service {
     public void sendData() {
         mBgReading = BgReading.last();
         if (mBgReading != null) {
-            sendDownload(buildDictionary());
+            sendDownload();
         }
     }
 
@@ -160,8 +162,11 @@ public class PebbleSync extends Service {
         return bgGraphBuilder.unit();
     }
 
-    public void sendDownload(PebbleDictionary dictionary) {
+    public void sendDownload() {
         if (PebbleKit.isWatchConnected(mContext)) {
+
+            PebbleDictionary dictionary = buildDictionary();
+
             if (dictionary != null && mContext != null) {
                 Log.d(TAG, "sendDownload: Sending data to pebble");
                 PebbleKit.sendDataToPebble(mContext, PEBBLEAPP_UUID, dictionary);
@@ -183,6 +188,7 @@ public class PebbleSync extends Service {
     }
 
     public String slopeOrdinal() {
+        if(mBgReading == null) return "0";
         String arrow_name = mBgReading.slopeName();
         if (arrow_name.compareTo("DoubleDown") == 0) return "7";
         if (arrow_name.compareTo("SingleDown") == 0) return "6";
