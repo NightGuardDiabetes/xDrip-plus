@@ -24,6 +24,7 @@ import com.eveningoutpost.dexdrip.Models.UserError.Log;
 import com.eveningoutpost.dexdrip.Services.SyncService;
 import com.eveningoutpost.dexdrip.ShareModels.BgUploader;
 import com.eveningoutpost.dexdrip.ShareModels.Models.ShareUploadPayload;
+import com.eveningoutpost.dexdrip.UtilityModels.pebble.PebbleWatchSync;
 import com.eveningoutpost.dexdrip.WidgetUpdateService;
 import com.eveningoutpost.dexdrip.utils.BgToSpeech;
 import com.eveningoutpost.dexdrip.wearintegration.WatchUpdaterService;
@@ -173,7 +174,7 @@ public class BgSendQueue extends Model {
 
             // send to pebble
             if(prefs.getBoolean("broadcast_to_pebble", false)) {
-                context.startService(new Intent(context, PebbleSync.class));
+                context.startService(new Intent(context, PebbleWatchSync.class));
             }
 
             if ((!is_follower) && (prefs.getBoolean("plus_follow_master",false)))

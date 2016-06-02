@@ -1,5 +1,5 @@
 
-package com.eveningoutpost.dexdrip.utils;
+package com.eveningoutpost.dexdrip.UtilityModels.pebble.watchface;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -33,8 +33,7 @@ public class InstallPebbleWatchFace extends AppCompatActivity {
     private final static int MY_PERMISSIONS_REQUEST_STORAGE = 99;
     private static String TAG = "InstallPebbleWatchFace";
 
-    protected String getTag()
-    {
+    protected String getTag() {
         return TAG;
     }
 
@@ -84,13 +83,11 @@ public class InstallPebbleWatchFace extends AppCompatActivity {
     }
 
 
-    protected InputStream openRawResource()
-    {
+    protected InputStream openRawResource() {
         return getResources().openRawResource(R.raw.xdrip_pebble);
     }
 
-    protected String getOutputFilename()
-    {
+    protected String getOutputFilename() {
         return "xDrip-plus-pebble-auto-install.pbw";
     }
 

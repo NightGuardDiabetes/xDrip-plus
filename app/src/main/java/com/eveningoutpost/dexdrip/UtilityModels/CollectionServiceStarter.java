@@ -17,7 +17,7 @@ import com.eveningoutpost.dexdrip.Services.DoNothingService;
 import com.eveningoutpost.dexdrip.Services.G5CollectionService;
 import com.eveningoutpost.dexdrip.Services.SyncService;
 import com.eveningoutpost.dexdrip.Services.WifiCollectionService;
-import com.eveningoutpost.dexdrip.Services.WixelReader;
+import com.eveningoutpost.dexdrip.UtilityModels.pebble.PebbleWatchSync;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -245,8 +245,8 @@ public class CollectionServiceStarter {
     }
 
     private void startPebbleSyncService() {
-        Log.d(TAG, "starting PebbleSync service");
-        mContext.startService(new Intent(mContext, PebbleSync.class));
+        Log.d(TAG, "starting PebbleWatchSync service");
+        mContext.startService(new Intent(mContext, PebbleWatchSync.class));
     }
     private void startSyncService() {
         Log.d(TAG, "starting Sync service");

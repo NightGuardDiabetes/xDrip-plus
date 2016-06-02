@@ -74,6 +74,8 @@
             android:name=".Services.WifiCollectionService"
             android:enabled="true"
             android:exported="true" />
+
+
         <service
             android:name=".wearintegration.WatchUpdaterService"
             android:exported="true">
@@ -114,7 +116,8 @@
         <activity
             android:name=".BGHistory"
             android:label="Glucose History" />
-        <activity android:name=".PhoneKeypadInputActivity"
+        <activity
+            android:name=".PhoneKeypadInputActivity"
             android:theme="@style/PopUpKeypad"
             android:label="Keypad Input" />
 
@@ -201,7 +204,7 @@
             android:name=".CalibrationCheckInActivity"
             android:label="@string/title_activity_calibration_check_in" />
         <activity
-        android:name=".utils.InstallPebbleWatchFace"
+            android:name=".UtilityModels.pebble.watchface.InstallPebbleWatchFace"
             android:label="Install Pebble Watchface" />
         <activity
             android:name=".UsbConnectedActivity"
@@ -223,8 +226,7 @@
         <service
             android:name=".Services.G5CollectionService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true"></service>
 
         <activity
             android:name=".ShareTest"
@@ -280,7 +282,7 @@
             android:name=".UtilityModels.Notifications"
             android:exported="false" />
         <service
-            android:name=".UtilityModels.PebbleSync"
+            android:name=".UtilityModels.pebble.PebbleWatchSync"
             android:enabled="true"
             android:exported="true" />
         <service
@@ -387,8 +389,10 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="com.google.android.voicesearch.SELF_NOTE" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
 

@@ -101,6 +101,11 @@ android {
         versionName generateVersionName()
         buildConfigField "int", "buildVersion", generateVersionNumberString()
     }
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+    }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -118,12 +123,23 @@ android {
             versionNameSuffix "-debug"
         }
     }
+
+//    packagingOptions {
+//        exclude 'LICENCE.txt'
+//        exclude 'META-INF/maven'
+//        exclude 'META-INF/LICENCE'
+//        exclude 'META-INF/LICENSE'
+//        exclude 'META-INF/NOTICE'
+//        //exclude 'META-INF/INDEX.LIST'
+//    }
+
+
 }
 
 // jamorham auto test rig
 task jamorhamAutoInstall(type: Exec) {
     // just comment out the line below if it causes compile problems
-    //commandLine "bash", "$projectDir/autoinstallviausb"
+    commandLine "bash", "$projectDir/autoinstallviausb"
 }
 assembleRelease.doLast {
     jamorhamAutoInstall.execute()
@@ -172,7 +188,7 @@ dependencies {
     compile 'com.github.amlcurran.showcaseview:library:5.4.1'
 
     // Pebble-Trend, needs to be checked if really needed
-    compile 'com.android.support:multidex:1.0.1'
+    //compile 'com.android.support:multidex:1.0.1'
     compile 'ar.com.hjg:pngj:2.1.0'
 
 }
