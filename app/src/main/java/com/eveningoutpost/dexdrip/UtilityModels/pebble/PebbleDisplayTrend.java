@@ -16,6 +16,8 @@ import java.util.TimeZone;
 
 /**
  * Created by THE NIGHTSCOUT PROJECT CONTRIBUTORS (and adapted to fit the needs of this project)
+ * <p/>
+ * Changed by Andy (created from PebbleSync from PebbleTrend branch)
  */
 public class PebbleDisplayTrend extends PebbleDisplayAbstract {
 
@@ -105,6 +107,7 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
         sendData();
     }
 
+    private String lastBfReadingSent;
 
     public PebbleDictionary buildDictionary() {
         TimeZone tz = TimeZone.getDefault();
@@ -133,14 +136,22 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
             }
 
             if (no_signal) {
-                this.dictionary.addString(BG_KEY, "?RF");
-                this.dictionary.addInt8(VIBE_KEY, (byte) 0x01);
+                // We display last reading, even if none was sent for some time.
+                if (this.lastBfReadingSent != null) {
+                    this.dictionary.addString(BG_KEY, this.lastBfReadingSent);
+                    this.dictionary.addInt8(VIBE_KEY, (byte) 0x01); // not sure what this does exactly
+                } else {
+                    this.dictionary.addString(BG_KEY, "?RF");
+                    this.dictionary.addInt8(VIBE_KEY, (byte) 0x01);
+                }
             } else {
                 this.dictionary.addString(BG_KEY, bgReadingS);
                 this.dictionary.addInt8(VIBE_KEY, (byte) 0x00);
+                this.lastBfReadingSent = bgReadingS;
             }
 
             this.dictionary.addUint32(RECORD_TIME_KEY, (int) (((this.bgReading.timestamp + offsetFromUTC) / 1000)));
+
             if (getBooleanValue("pebble_show_delta")) {
                 if (no_signal) {
                     this.dictionary.addString(BG_DELTA_KEY, "No Signal");
@@ -150,6 +161,7 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
             } else {
                 this.dictionary.addString(BG_DELTA_KEY, "");
             }
+
             String msg = PreferenceManager.getDefaultSharedPreferences(this.context).getString("pebble_special_value", "");
 
             if (bgReadingS.equalsIgnoreCase(msg)) {

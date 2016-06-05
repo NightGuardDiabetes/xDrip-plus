@@ -14,7 +14,7 @@ import java.util.TimeZone;
 /**
  * Created by THE NIGHTSCOUT PROJECT CONTRIBUTORS (and adapted to fit the needs of this project)
  * <p/>
- * Changed by Andy
+ * Changed by Andy (created from original PebbleSync)
  */
 public class PebbleDisplayStandard extends PebbleDisplayAbstract {
 
@@ -31,13 +31,13 @@ public class PebbleDisplayStandard extends PebbleDisplayAbstract {
 
     public void receiveData(int transactionId, PebbleDictionary data) {
         Log.d(TAG, "receiveData: transactionId is " + String.valueOf(transactionId));
-        if (this.pebbleWatchSync.lastTransactionId == 0 || transactionId != this.pebbleWatchSync.lastTransactionId) {
-            this.pebbleWatchSync.lastTransactionId = transactionId;
+        if (PebbleWatchSync.lastTransactionId == 0 || transactionId != PebbleWatchSync.lastTransactionId) {
+            PebbleWatchSync.lastTransactionId = transactionId;
             Log.d(TAG, "Received Query. data: " + data.size() + ". sending ACK and data");
             PebbleKit.sendAckToPebble(this.context, transactionId);
             sendData();
         } else {
-            Log.d(TAG, "receiveData: lastTransactionId is " + String.valueOf(this.pebbleWatchSync.lastTransactionId) + ", sending NACK");
+            Log.d(TAG, "receiveData: lastTransactionId is " + String.valueOf(PebbleWatchSync.lastTransactionId) + ", sending NACK");
             PebbleKit.sendNackToPebble(this.context, transactionId);
         }
     }

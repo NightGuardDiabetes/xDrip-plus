@@ -37,6 +37,7 @@ import com.eveningoutpost.dexdrip.Services.PlusSyncService;
 import com.eveningoutpost.dexdrip.UtilityModels.CollectionServiceStarter;
 import com.eveningoutpost.dexdrip.UtilityModels.Constants;
 import com.eveningoutpost.dexdrip.UtilityModels.UpdateActivity;
+import com.eveningoutpost.dexdrip.UtilityModels.pebble.PebbleUtil;
 import com.eveningoutpost.dexdrip.UtilityModels.pebble.PebbleWatchSync;
 import com.eveningoutpost.dexdrip.UtilityModels.pebble.watchface.InstallPebbleTrendWatchFace;
 import com.eveningoutpost.dexdrip.UtilityModels.pebble.watchface.InstallPebbleWatchFace;
@@ -603,8 +604,9 @@ public class Preferences extends PreferenceActivity {
             final Preference pebbleSync2 = findPreference("broadcast_to_pebble");
 
             // Pebble Trend - START
+            final Preference watchIntegration = findPreference("watch_integration");
             final PreferenceCategory watchCategory = (PreferenceCategory) findPreference("watch_integration");
-            //final Preference pebbleTrendWatchface = findPreference("");
+            //final ListPreference pebbleType = (ListPreference) findPreference("watch_integration");
             final Preference pebbleTrend = findPreference("pebble_display_trend");
             final Preference pebbleHighLine = findPreference("pebble_high_line");
             final Preference pebbleLowLine = findPreference("pebble_low_line");
@@ -786,7 +788,7 @@ public class Preferences extends PreferenceActivity {
 
             // Pebble Trend -- START
 
-            int currentPebbleSync = getCurrentPebbleSync();
+            int currentPebbleSync = PebbleUtil.getCurrentPebbleSyncType(this.prefs);
 
             if (currentPebbleSync == 1) {
                 watchCategory.removePreference(pebbleSpecialValue);
@@ -810,13 +812,8 @@ public class Preferences extends PreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     final Context context = preference.getContext();
 
-                    int pebbleType = 1;
-
-                    if (newValue instanceof Integer) {
-                        pebbleType = (Integer) newValue;
-                    } else {
-                        pebbleType = Integer.parseInt((String) newValue);
-                    }
+                    int oldPebbleType = PebbleUtil.getCurrentPebbleSyncType(AllPrefsFragment.this.prefs);
+                    int pebbleType = PebbleUtil.getCurrentPebbleSyncType(newValue);
 
                     // install watchface
                     installPebbleWatchface(pebbleType, preference);
@@ -825,25 +822,41 @@ public class Preferences extends PreferenceActivity {
                     enablePebble(pebbleType, context);
 
                     // configuration options
-                    watchCategory.removeAll();
+                    if (oldPebbleType != pebbleType) {
 
+                        // REMOVE ALL
+                        if (oldPebbleType == 2) {
+                            watchCategory.removePreference(pebbleSpecialValue);
+                            watchCategory.removePreference(pebbleSpecialText);
+                        } else {
+                            watchCategory.removePreference(pebbleTrend);
+                            watchCategory.removePreference(pebbleHighLine);
+                            watchCategory.removePreference(pebbleLowLine);
+                            watchCategory.removePreference(pebbleTrendPeriod);
+                            watchCategory.removePreference(pebbleDelta);
+                            watchCategory.removePreference(pebbleDeltaUnits);
+                            watchCategory.removePreference(pebbleShowArrows);
+                            watchCategory.removePreference(pebbleSpecialValue);
+                            watchCategory.removePreference(pebbleSpecialText);
+                        }
 
-                    if (pebbleType == 3) {
-                        watchCategory.addPreference(pebbleTrend);
-                        watchCategory.addPreference(pebbleHighLine);
-                        watchCategory.addPreference(pebbleLowLine);
-                        watchCategory.addPreference(pebbleTrendPeriod);
-                        watchCategory.addPreference(pebbleDelta);
-                        watchCategory.addPreference(pebbleDeltaUnits);
-                        watchCategory.addPreference(pebbleShowArrows);
+                        // Add New one
+                        if (pebbleType == 3) {
+                            watchCategory.addPreference(pebbleTrend);
+                            watchCategory.addPreference(pebbleHighLine);
+                            watchCategory.addPreference(pebbleLowLine);
+                            watchCategory.addPreference(pebbleTrendPeriod);
+                            watchCategory.addPreference(pebbleDelta);
+                            watchCategory.addPreference(pebbleDeltaUnits);
+                            watchCategory.addPreference(pebbleShowArrows);
+                        }
+
+                        if (oldPebbleType != 1) {
+                            watchCategory.addPreference(pebbleSpecialValue);
+                            watchCategory.addPreference(pebbleSpecialText);
+                        }
+
                     }
-
-
-                    if (pebbleType != 1) {
-                        watchCategory.addPreference(pebbleSpecialValue);
-                        watchCategory.addPreference(pebbleSpecialText);
-                    }
-
 
                     return true;
                 }
@@ -1006,29 +1019,6 @@ public class Preferences extends PreferenceActivity {
         }
 
 
-        private int getCurrentPebbleSync() {
-            String value = null;
-
-            try {
-                value = this.prefs.getString("broadcast_to_pebble", "1");
-            } catch (ClassCastException ex) {
-            }
-
-
-            if (value == null) {
-                try {
-                    Boolean bvalue = this.prefs.getBoolean("broadcast_to_pebble", false);
-
-                    value = bvalue ? "2" : "1";
-                } catch (ClassCastException ex) {
-                    value = "1";
-                }
-            }
-
-            return Integer.parseInt(value);
-        }
-
-
         private void installPebbleWatchface(final int pebbleType, Preference preference) {
 
             final Context context = preference.getContext();
@@ -1046,7 +1036,6 @@ public class Preferences extends PreferenceActivity {
                     dialog.dismiss();
 
                     if (pebbleType == 2) {
-
                         context.startActivity(new Intent(context, InstallPebbleWatchFace.class));
                     } else {
                         context.startActivity(new Intent(context, InstallPebbleTrendWatchFace.class));

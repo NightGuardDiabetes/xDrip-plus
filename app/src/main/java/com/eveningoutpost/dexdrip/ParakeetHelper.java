@@ -39,7 +39,7 @@ public class ParakeetHelper {
 
         for (String host : hosts) {
             host = host.trim();
-            if ((host.startsWith("http://") || host.startsWith("https://")) && host.contains("/json.get")) {
+            if ((host.startsWith("http://") || host.startsWith("https://")) && (host.contains("/json.get") || host.contains("Parakeet"))) {
                 return host;
             }
         }
@@ -80,39 +80,41 @@ public class ParakeetHelper {
         } else {
             // look at any record which looks newer than we have considered so far
 
-                // ignore everything except parakeet sourced datums
-                if ((timestamp > highest_parakeet_timestamp) && (!geo_location.equals("-15,-15"))) {
-                highest_parakeet_timestamp=timestamp;
-                }
-                    final int minutes_since = (int) ((JoH.ts() - highest_parakeet_timestamp) / (1000 * 60));
-                    if (highest_parakeet_timestamp>0) Log.d(TAG, "Not waiting for parakeet Minutes since: " + minutes_since);
-
-
-                    if (!parakeet_not_checking_in) {
-                        if ((minutes_since > PARAKEET_ALERT_MISSING_MINUTES) && (highest_parakeet_timestamp > 0)) {
-                            if (timestamp >= highest_timestamp) {
-                                parakeet_not_checking_in = true;
-                                Log.i(TAG, "Parakeet missing for: " + minutes_since + " mins");
-                                sendNotification("The parakeet has not connected > " + minutes_since + " mins",
-                                        "Parakeet missing");
-                                // TODO some more sophisticated persisting notification
-                            }
-                        }
-                    } else {
-                        if (timestamp < highest_parakeet_timestamp) Log.d(TAG,"Timestamp less than highest");
-                        if ((timestamp >= highest_parakeet_timestamp) && (minutes_since < PARAKEET_ALERT_MISSING_MINUTES)
-                                && (!geo_location.equals("-15,-15"))) {
-                            Log.d(TAG, "Parakeet now checking in: " + minutes_since + " mins ago");
-                            parakeet_not_checking_in = false;
-                            cancelParakeetMissingNotification();
-                        }
-                    }
-
-                    if (timestamp > highest_timestamp) {
-                        highest_timestamp = timestamp;
-                    }
-
+            // ignore everything except parakeet sourced datums
+            if ((timestamp > highest_parakeet_timestamp) && (!geo_location.equals("-15,-15"))) {
+                highest_parakeet_timestamp = timestamp;
             }
+            final int minutes_since = (int) ((JoH.ts() - highest_parakeet_timestamp) / (1000 * 60));
+            if (highest_parakeet_timestamp > 0)
+                Log.d(TAG, "Not waiting for parakeet Minutes since: " + minutes_since);
+
+
+            if (!parakeet_not_checking_in) {
+                if ((minutes_since > PARAKEET_ALERT_MISSING_MINUTES) && (highest_parakeet_timestamp > 0)) {
+                    if (timestamp >= highest_timestamp) {
+                        parakeet_not_checking_in = true;
+                        Log.i(TAG, "Parakeet missing for: " + minutes_since + " mins");
+                        sendNotification("The parakeet has not connected > " + minutes_since + " mins",
+                                "Parakeet missing");
+                        // TODO some more sophisticated persisting notification
+                    }
+                }
+            } else {
+                if (timestamp < highest_parakeet_timestamp)
+                    Log.d(TAG, "Timestamp less than highest");
+                if ((timestamp >= highest_parakeet_timestamp) && (minutes_since < PARAKEET_ALERT_MISSING_MINUTES)
+                        && (!geo_location.equals("-15,-15"))) {
+                    Log.d(TAG, "Parakeet now checking in: " + minutes_since + " mins ago");
+                    parakeet_not_checking_in = false;
+                    cancelParakeetMissingNotification();
+                }
+            }
+
+            if (timestamp > highest_timestamp) {
+                highest_timestamp = timestamp;
+            }
+
+        }
 
     }
 
@@ -121,7 +123,7 @@ public class ParakeetHelper {
             waiting_for_parakeet = true;
             wait_timestamp = System.currentTimeMillis();
         }
-        }
+    }
 
     public static void toast(Context context, final String msg) {
         try {
@@ -156,11 +158,14 @@ public class ParakeetHelper {
         notificationManager.notify(Notifications.parakeetMissingId, notificationBuilder.build());
     }
 
-    private static void cancelParakeetMissingNotification()
-    {
+    private static void cancelParakeetMissingNotification() {
         NotificationManager notificationManager =
                 (NotificationManager) xdrip.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(Notifications.parakeetMissingId);
+    }
+
+    public static boolean isRealParakeetDevice() {
+        return (!parakeet_not_checking_in);
     }
 
     public static class ServiceCallback implements Preferences.OnServiceTaskCompleted {

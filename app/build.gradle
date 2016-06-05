@@ -3,9 +3,9 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
 
-     dependencies {
+    dependencies {
         classpath 'io.fabric.tools:gradle:1.+'
-     }
+    }
 }
 apply plugin: 'com.android.application'
 //apply plugin: 'io.fabric'
@@ -119,8 +119,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'proguard-rules.pro'
             ext.enableCrashlytics = false
-      //      applicationIdSuffix ".debug"
+            //      applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
+            debuggable true
         }
     }
 
@@ -165,7 +166,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.google.android.gms:play-services-wearable:8.4.0'
-    compile 'com.squareup.okhttp:okhttp:2.5.0' 
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'

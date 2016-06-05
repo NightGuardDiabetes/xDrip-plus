@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 /**
  * Created by jamorham on 22/04/2016.
+ * modified by Andy, to be able to add additional PebbleWtatchFace, which can just extend this
  */
 public class InstallPebbleWatchFace extends AppCompatActivity {
 

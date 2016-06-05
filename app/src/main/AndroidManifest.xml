@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.eveningoutpost.dexdrip">
+          package="com.eveningoutpost.dexdrip">
 
-    <permission android:name="com.eveningoutpost.dexdrip.permissions.RECEIVE_BG_ESTIMATE" />
-    <permission android:name="com.eveningoutpost.dexdrip.permission.C2D_MESSAGE" />
+    <permission android:name="com.eveningoutpost.dexdrip.permissions.RECEIVE_BG_ESTIMATE"/>
+    <permission android:name="com.eveningoutpost.dexdrip.permission.C2D_MESSAGE"/>
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
-        android:required="true" />
-    <uses-feature android:name="android.hardware.usb.host" />
+        android:required="true"/>
+    <uses-feature android:name="android.hardware.usb.host"/>
 
-    <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
-    <uses-permission-sdk-23 android:name="android.permission.CAMERA" />
-    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <uses-permission-sdk-23 android:name="android.permission.CAMERA"/>
+    <uses-permission-sdk-23 android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission-sdk-23 android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.BATTERY_STATS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
 
     <application
         android:name=".xdrip"
@@ -42,103 +42,103 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="DexDrip.db" />
+            android:value="DexDrip.db"/>
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="41" />
+            android:value="41"/>
 
         <provider
             android:name="com.activeandroid.content.ContentProvider"
             android:authorities="com.example"
-            android:exported="false" />
+            android:exported="false"/>
 
         <activity
             android:name=".Home"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".BluetoothScan"
-            android:label="@string/title_activity_bluetooth_scan" />
+            android:label="@string/title_activity_bluetooth_scan"/>
 
         <service
             android:name=".Services.DexCollectionService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
         <service
             android:name=".Services.WifiCollectionService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
 
         <service
             android:name=".wearintegration.WatchUpdaterService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER"/>
             </intent-filter>
         </service>
 
         <activity
             android:name=".Tables.BgReadingTable"
-            android:label="Bg Readings Table" />
+            android:label="Bg Readings Table"/>
         <activity
             android:name=".Tables.SensorDataTable"
-            android:label="Sensor Table" />
+            android:label="Sensor Table"/>
         <activity
             android:name=".ImportDatabaseActivity"
-            android:label="Import Database" />
+            android:label="Import Database"/>
         <activity
             android:name=".GoogleDriveInterface"
             android:label="Sync Data"
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:theme="@android:style/Theme.NoDisplay"/>
         <activity
             android:name=".GcmActivity"
             android:theme="@android:style/Theme.NoDisplay"
-            android:label="GCM connect" />
+            android:label="GCM connect"/>
         <activity
             android:name=".AddCalibration"
-            android:label="@string/title_activity_add_calibration" />
+            android:label="@string/title_activity_add_calibration"/>
         <activity
             android:name=".StartNewSensor"
-            android:label="@string/title_activity_start_new_sensor" />
+            android:label="@string/title_activity_start_new_sensor"/>
         <activity
             android:name=".NewSensorLocation"
-            android:label="@string/title_activity_new_sensor_location" />
+            android:label="@string/title_activity_new_sensor_location"/>
         <activity
             android:name=".StopSensor"
-            android:label="@string/title_activity_stop_sensor" />
+            android:label="@string/title_activity_stop_sensor"/>
         <activity
             android:name=".BGHistory"
-            android:label="Glucose History" />
+            android:label="Glucose History"/>
         <activity
             android:name=".PhoneKeypadInputActivity"
             android:theme="@style/PopUpKeypad"
-            android:label="Keypad Input" />
+            android:label="Keypad Input"/>
 
         <receiver android:name=".AutoStart">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".Tables.CalibrationDataTable"
-            android:label="@string/title_activity_calibration_data_table" />
+            android:label="@string/title_activity_calibration_data_table"/>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
 
-                <category android:name="com.eveningoutpost.dexdrip" />
+                <category android:name="com.eveningoutpost.dexdrip"/>
             </intent-filter>
         </receiver>
 
@@ -146,82 +146,85 @@
             android:name=".GcmListenerSvc"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
             </intent-filter>
         </service>
         <service
             android:name=".MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
             </intent-filter>
         </service>
         <service
             android:name=".RegistrationIntentService"
-            android:exported="false" />
+            android:exported="false"/>
         <service
             android:name=".MyDriveEventService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT" />
+                <action android:name="com.google.android.gms.drive.events.HANDLE_EVENT"/>
             </intent-filter>
         </service>
         <service
             android:name=".Services.SyncService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
         <service
             android:name=".ImportedLibraries.dexcom.SyncingService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
         <activity
             android:name=".stats.StatsActivity"
             android:theme="@style/AppTheme"
-            android:label="Statistics" />
+            android:label="Statistics"/>
         <activity
             android:name=".SnoozeActivity"
-            android:label="@string/title_snooze" />
+            android:label="@string/title_snooze"/>
         <activity
             android:name=".FakeNumbers"
-            android:label="@string/title_activity_fake_numbers" />
+            android:label="@string/title_activity_fake_numbers"/>
         <activity
             android:name=".EditAlertActivity"
-            android:label="@string/title_activity_edit_alert" />
+            android:label="@string/title_activity_edit_alert"/>
         <activity
             android:name=".DoubleCalibrationActivity"
-            android:label="@string/title_activity_double_calibration" />
+            android:label="@string/title_activity_double_calibration"/>
         <activity
             android:name=".CalibrationOverride"
-            android:label="@string/title_activity_calibration_override" />
+            android:label="@string/title_activity_calibration_override"/>
         <activity
             android:name=".CalibrationGraph"
-            android:label="@string/title_activity_calibration_graph" />
+            android:label="@string/title_activity_calibration_graph"/>
         <activity
             android:name=".LicenseAgreementActivity"
-            android:label="@string/title_activity_license_agreement" />
+            android:label="@string/title_activity_license_agreement"/>
         <activity
             android:name=".CalibrationCheckInActivity"
-            android:label="@string/title_activity_calibration_check_in" />
+            android:label="@string/title_activity_calibration_check_in"/>
         <activity
             android:name=".UtilityModels.pebble.watchface.InstallPebbleWatchFace"
-            android:label="Install Pebble Watchface" />
+            android:label="Install Pebble Watchface"/>
+        <activity
+            android:name=".UtilityModels.pebble.watchface.InstallPebbleTrendWatchFace"
+            android:label="Install Pebble Trend Watchface"/>
         <activity
             android:name=".UsbConnectedActivity"
             android:label="@string/title_activity_usb_connected">
             <intent-filter>
-                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />
+                android:resource="@xml/device_filter"/>
         </activity>
 
         <service
             android:name=".Services.DexShareCollectionService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
         <service
             android:name=".Services.G5CollectionService"
@@ -230,64 +233,64 @@
 
         <activity
             android:name=".ShareTest"
-            android:label="@string/title_activity_share_test" />
+            android:label="@string/title_activity_share_test"/>
         <activity
             android:name=".SystemStatus"
-            android:label="@string/title_activity_system_status" />
+            android:label="@string/title_activity_system_status"/>
         <activity
             android:name=".utils.Preferences"
             android:theme="@style/OldAppTheme"
-            android:label="@string/title_activity_preferences" />
+            android:label="@string/title_activity_preferences"/>
 
         <receiver android:name=".xDripWidget">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/x_drip_widget_info" />
+                android:resource="@xml/x_drip_widget_info"/>
         </receiver>
 
         <service
             android:name=".WidgetUpdateService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="913d7bd9c0b910d315c3bc0e057056daf73b698e" />
+            android:value="913d7bd9c0b910d315c3bc0e057056daf73b698e"/>
 
         <activity
             android:name=".AlertList"
-            android:label="@string/title_activity_alert_list" />
+            android:label="@string/title_activity_alert_list"/>
         <activity
             android:name=".ErrorsActivity"
-            android:label="Error List" />
+            android:label="Error List"/>
         <activity
             android:name=".MissedReadingActivity"
-            android:label="Configure Missed Readings" />
+            android:label="Configure Missed Readings"/>
         <activity
             android:name=".FollowerManagementActivity"
-            android:label="Manage Followers" />
+            android:label="Manage Followers"/>
 
         <service
             android:name=".Services.SnoozeOnNotificationDismissService"
-            android:exported="false" />
+            android:exported="false"/>
         <service
             android:name=".Services.MissedReadingService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
         <service
             android:name=".UtilityModels.Notifications"
-            android:exported="false" />
+            android:exported="false"/>
         <service
             android:name=".UtilityModels.pebble.PebbleWatchSync"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
         <service
             android:name=".Services.DailyIntentService"
-            android:exported="false" />
+            android:exported="false"/>
 
         <activity
             android:name=".localeTasker.ui.EditActivity"
@@ -297,25 +300,25 @@
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING"/>
             </intent-filter>
         </activity>
 
         <receiver android:name=".NSClientReceiver">
             <intent-filter>
-                <action android:name="info.nightscout.client.NEW_SGV" />
+                <action android:name="info.nightscout.client.NEW_SGV"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="info.nightscout.client.NEW_TREATMENT" />
+                <action android:name="info.nightscout.client.NEW_TREATMENT"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="info.nightscout.client.CHANGED_TREATMENT" />
+                <action android:name="info.nightscout.client.CHANGED_TREATMENT"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="info.nightscout.client.REMOVED_TREATMENT" />
+                <action android:name="info.nightscout.client.REMOVED_TREATMENT"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="info.nightscout.client.NEW_PROFILE" />
+                <action android:name="info.nightscout.client.NEW_PROFILE"/>
             </intent-filter>
         </receiver>
         <receiver
@@ -323,7 +326,7 @@
             android:exported="true"
             android:process=":background">
             <intent-filter>
-                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING"/>
             </intent-filter>
         </receiver>
 
@@ -332,28 +335,28 @@
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
-                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY"/>
             </intent-filter>
         </service>
         <service
             android:name=".Services.PlusSyncService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
         <activity
             android:name=".UtilityModels.UpdateActivity"
-            android:label="@string/title_activity_update" />
+            android:label="@string/title_activity_update"/>
         <activity
             android:name=".utils.DisplayQRCode"
             android:label="@string/title_activity_display_qrcode"
-            android:noHistory="true" />
+            android:noHistory="true"/>
         <activity
             android:name=".UtilityModels.SendFeedBack"
             android:label="@string/title_activity_send_feed_back"
-            android:noHistory="true" />
+            android:noHistory="true"/>
         <activity
             android:name=".utils.SdcardImportExport"
-            android:label="Settings on external storage" />
+            android:label="Settings on external storage"/>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -365,35 +368,35 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="@string/google_maps_key"/>
 
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:noHistory="true" />
+            android:noHistory="true"/>
 
         <service
             android:name=".Services.DoNothingService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
-        <activity android:name=".HelpActivity" />
-        <activity android:name=".Agreement" />
+        <activity android:name=".HelpActivity"/>
+        <activity android:name=".Agreement"/>
         <activity
             android:name=".WearVoiceActivity"
             android:label="Simulation handheld">
             <intent-filter>
-                <action android:name="com.google.android.gm.action.AUTO_SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="*/*" />
+                <action android:name="com.google.android.gm.action.AUTO_SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="com.google.android.voicesearch.SELF_NOTE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="com.google.android.voicesearch.SELF_NOTE"/>
 
-                <data android:mimeType="text/plain" />
+                <data android:mimeType="text/plain"/>
             </intent-filter>
 
         </activity>

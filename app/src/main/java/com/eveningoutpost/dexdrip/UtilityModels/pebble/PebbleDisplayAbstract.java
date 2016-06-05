@@ -7,6 +7,7 @@ import android.os.BatteryManager;
 import android.preference.PreferenceManager;
 
 import com.eveningoutpost.dexdrip.Models.BgReading;
+import com.eveningoutpost.dexdrip.ParakeetHelper;
 import com.eveningoutpost.dexdrip.UtilityModels.BgGraphBuilder;
 import com.eveningoutpost.dexdrip.utils.DexCollectionType;
 import com.eveningoutpost.dexdrip.utils.Preferences;
@@ -24,7 +25,7 @@ public abstract class PebbleDisplayAbstract implements PebbleDisplayInterface {
     protected static final int PHONE_TIME_KEY = 3;
     protected static final int BG_DELTA_KEY = 4;
     protected static final int UPLOADER_BATTERY_KEY = 5;
-    public static final int NAME_KEY = 6;
+    protected static final int NAME_KEY = 6;
 
     protected Context context;
     protected BgGraphBuilder bgGraphBuilder;
@@ -60,13 +61,9 @@ public abstract class PebbleDisplayAbstract implements PebbleDisplayInterface {
 
 
     public String getBatteryString(String key) {
-        return String.format("%d", PreferenceManager.getDefaultSharedPreferences(this.context).getInt("bridge_battery", 0));
+        return String.format("%d", PreferenceManager.getDefaultSharedPreferences(this.context).getInt(key, 0));
     }
 
-
-    public String getBridgeBatteryString() {
-        return String.format("%d", PreferenceManager.getDefaultSharedPreferences(this.context).getInt("bridge_battery", 0));
-    }
 
     public String getSlopeOrdinal() {
         if (this.bgReading == null)
@@ -118,7 +115,8 @@ public abstract class PebbleDisplayAbstract implements PebbleDisplayInterface {
     public boolean doWeDisplayWixelBatteryStatus() {
         DexCollectionType dexCollectionType = getDexCollectionType();
 
-        return ((dexCollectionType == DexCollectionType.DexbridgeWixel || dexCollectionType == DexCollectionType.WifiWixel) &&
+        return ((dexCollectionType == DexCollectionType.DexbridgeWixel || //
+                (dexCollectionType == DexCollectionType.WifiWixel && ParakeetHelper.isRealParakeetDevice())) &&
                 getBooleanValue("display_bridge_battery", true));
     }
 
@@ -141,11 +139,11 @@ public abstract class PebbleDisplayAbstract implements PebbleDisplayInterface {
         if (doWeDisplayWixelBatteryStatus()) {
 
             if (isDexBridgeWixel()) {
-                dictionary.addString(UPLOADER_BATTERY_KEY, getBridgeBatteryString());
+                dictionary.addString(UPLOADER_BATTERY_KEY, getBatteryString("bridge_battery"));
                 dictionary.addString(NAME_KEY, "Bridge");
             } else {
                 dictionary.addString(UPLOADER_BATTERY_KEY, getBatteryString("parakeet_battery"));
-                dictionary.addString(NAME_KEY, "Parakeet");
+                dictionary.addString(NAME_KEY, "Phone");
             }
 
         } else {

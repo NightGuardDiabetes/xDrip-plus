@@ -15,13 +15,24 @@ public interface PebbleDisplayInterface {
      */
     void startDeviceCommand();
 
-
+    /**
+     * For receiveData event
+     */
     void receiveData(int transactionId, PebbleDictionary data);
 
+    /**
+     * For receiveNack event
+     */
     void receiveNack(int transactionId);
 
+    /**
+     * For receiveAck event
+     */
     void receiveAck(int transactionId);
 
+    /**
+     * Init
+     */
     void initDisplay(Context context, PebbleWatchSync pebbleWatchSync, BgGraphBuilder bgGraphBuilder);
 
 }
