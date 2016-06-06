@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
 
 import com.eveningoutpost.dexdrip.Models.BgReading;
-import com.eveningoutpost.dexdrip.Models.Sensor;
 import com.eveningoutpost.dexdrip.Models.UserError.Log;
 import com.eveningoutpost.dexdrip.UtilityModels.BgSparklineBuilder;
 import com.eveningoutpost.dexdrip.UtilityModels.SimpleImageEncoder;
@@ -20,19 +19,15 @@ import java.util.TimeZone;
  * <p/>
  * Changed by Andy (created from PebbleSync from PebbleTrend branch)
  */
-public class PebbleDisplayTrend extends PebbleDisplayAbstract {
+public class PebbleDisplayTrendOld extends PebbleDisplayAbstract {
 
-    private final static String TAG = PebbleDisplayTrend.class.getSimpleName();
+    private final static String TAG = PebbleDisplayTrendOld.class.getSimpleName();
 
     public static final int TREND_BEGIN_KEY = 7;
     public static final int TREND_DATA_KEY = 8;
     public static final int TREND_END_KEY = 9;
     public static final int MESSAGE_KEY = 10;
     public static final int VIBE_KEY = 11;
-
-    public static final int SYNC_KEY = 1000;
-    public static final int PLATFORM_KEY = 1001;
-    public static final int VERSION_KEY = 1002;
 
     public static final int CHUNK_SIZE = 100;
 
@@ -47,12 +42,6 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
     private static ByteBuffer buff = null;
     public static int retries = 0;
 
-    private static long pebble_platform = -1;
-    private static String pebble_app_version = "";
-    private static long pebble_sync_value = 0;
-    private static boolean sentInitialSync = false;
-
-
     private static short sendStep = 5;
     private PebbleDictionary dictionary = new PebbleDictionary();
 
@@ -65,20 +54,6 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
         messageInTransit = false;
         done = true;
         sendingData = false;
-
-
-        // FIXME: This is not working yet.
-        //this.dictionary.addInt32(SYNC_KEY, 0);
-        //sendDataToPebble(this.dictionary);
-        //this.dictionary.remove(SYNC_KEY);
-
-        if (pebble_app_version.isEmpty() && sentInitialSync) {
-            Log.d(TAG, "onStartCommand: No Response and no pebble_app_version.");
-        }
-
-        Log.d(TAG, "onStart: Pebble App Version not known.  Sending Version Request");
-
-        // FIXME remove after SYNC_KEY is working
         sendData();
     }
 
@@ -121,27 +96,14 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
 
     @Override
     public void receiveData(int transactionId, PebbleDictionary data) {
-
         Log.d(TAG, "receiveData: transactionId is " + String.valueOf(transactionId));
-        PebbleWatchSync.lastTransactionId = transactionId;
+        this.pebbleWatchSync.lastTransactionId = transactionId;
         Log.d(TAG, "Received Query. data: " + data.size() + ".");
-
-        if (data.size() > 0) {
-            pebble_sync_value = data.getUnsignedIntegerAsLong(SYNC_KEY);
-            pebble_platform = data.getUnsignedIntegerAsLong(PLATFORM_KEY);
-            pebble_app_version = data.getString(VERSION_KEY);
-            Log.d(TAG, "receiveData: pebble_sync_value=" + pebble_sync_value + ", pebble_platform=" + pebble_platform + ", pebble_app_version=" + pebble_app_version);
-        } else {
-            Log.d(TAG, "receiveData: pebble_app_version not known");
-        }
-
         PebbleKit.sendAckToPebble(this.context, transactionId);
-
         transactionFailed = false;
         transactionOk = false;
         messageInTransit = false;
         sendStep = 5;
-
         sendData();
     }
 
@@ -252,7 +214,7 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
                         .setBgGraphBuilder(this.bgGraphBuilder)
                         .setStart(System.currentTimeMillis() - 60000 * 60 * trendPeriod)
                         .setEnd(System.currentTimeMillis())
-                        .setHeightPx(84)
+                        .setHeightPx(84) // 84
                         .setWidthPx(144)
                         .showHighLine(highLine)
                         .showLowLine(lowLine)
@@ -261,14 +223,7 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
                         .build();
 
                 //encode the trend bitmap as a PNG
-                int depth = 16;
-
-                if (pebble_platform == 0) {
-                    Log.d(TAG, "sendTrendToPebble: Encoding trend as Monochrome.");
-                    depth = 2;
-                }
-
-                byte[] img = SimpleImageEncoder.encodeBitmapAsPNG(bgTrend, true, depth, true);
+                byte[] img = SimpleImageEncoder.encodeBitmapAsPNG(bgTrend, true, 16, true);
                 image_size = img.length;
                 buff = ByteBuffer.wrap(img);
                 bgTrend.recycle();
@@ -435,20 +390,6 @@ public class PebbleDisplayTrend extends PebbleDisplayAbstract {
         return getBooleanValue("pebble_display_trend");
     }
 
-    public String getBgReading() {
-
-        if (isDexBridgeWixel()) {
-            Log.d(TAG, "bgReading: found xBridge wixel, sensor.isActive=" + Sensor.isActive() + ", sensor.stopped_at=" + Sensor.currentSensor().stopped_at + ", sensor.started_at=" + Sensor.currentSensor().started_at);
-            if (!(Sensor.isActive())) {
-                Log.d(TAG, "bgReading: No active Sensor");
-                return "?SN";
-            }
-            if ((Sensor.currentSensor().started_at + 60000 * 60 * 2 >= System.currentTimeMillis())) {
-                return "?CD";
-            }
-        }
-
-        return this.bgGraphBuilder.unitized_string(this.bgReading.calculated_value);
-    }
 
 }
+

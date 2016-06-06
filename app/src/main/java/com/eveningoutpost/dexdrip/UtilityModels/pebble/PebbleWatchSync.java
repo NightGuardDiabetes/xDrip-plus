@@ -60,7 +60,7 @@ public class PebbleWatchSync extends Service {
             pebbleDisplays = new HashMap<>();
             pebbleDisplays.put(PebbleDisplayType.None, new PebbleDisplayDummy());
             pebbleDisplays.put(PebbleDisplayType.Standard, new PebbleDisplayStandard());
-            pebbleDisplays.put(PebbleDisplayType.Trend, new PebbleDisplayTrend());
+            pebbleDisplays.put(PebbleDisplayType.Trend, new PebbleDisplayTrendOld());
         }
 
         for (PebbleDisplayInterface pdi : pebbleDisplays.values()) {
